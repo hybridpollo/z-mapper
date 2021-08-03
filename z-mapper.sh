@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#Script functions
 map_images () {
         touch ${_OUTPUTFILES}/${_IMAGE}.csv
         echo "Tag,Created,batch,build-date,Z-Release" > ${_OUTPUTFILES}/${_IMAGE}.csv
@@ -130,6 +131,7 @@ _TEST="rhel7"
 _LIBRARY="rhosp13"
 # OpenStack Platform Version (also part of the Tag)
 _OSPVERS="13.0"
+
 # Images to extracts the dates
 _IMAGES="openstack-aodh-api openstack-aodh-evaluator openstack-aodh-listener openstack-aodh-notifier openstack-ceilometer-central openstack-ceilometer-compute openstack-ceilometer-notification openstack-cinder-api openstack-cinder-scheduler openstack-cinder-volume openstack-cron openstack-fluentd openstack-glance-api openstack-gnocchi-api openstack-gnocchi-metricd openstack-gnocchi-statsd openstack-haproxy openstack-heat-api-cfn openstack-heat-api openstack-heat-engine openstack-horizon openstack-iscsid openstack-keystone openstack-mariadb openstack-memcached openstack-neutron-dhcp-agent openstack-neutron-l3-agent openstack-neutron-metadata-agent openstack-neutron-openvswitch-agent openstack-neutron-sriov-agent openstack-neutron-server openstack-nova-api openstack-nova-compute openstack-nova-conductor openstack-nova-consoleauth openstack-nova-libvirt openstack-nova-novncproxy openstack-nova-placement-api openstack-nova-scheduler openstack-panko-api openstack-rabbitmq openstack-redis openstack-sensu-client openstack-swift-account openstack-swift-container openstack-swift-object openstack-swift-proxy-server"
 # Outout Dir
@@ -159,19 +161,20 @@ _Z17DATE="2021-08-03"
 # Ensure Docker, skopeo, and JQ are installed
 _REDHAT_RELEASE=$(cut -d: -f 5 /etc/system-release-cpe | cut -d . -f 1)
 if [[ $_REDHAT_RELEASE -eq 7 ]]; then
-  echo "RHEL7 Detected"
+  echo "OS RHEL7 detected..."
   rpm -q docker >/dev/null 2>&1 || sudo yum install -y docker
   rpm -q skopeo >/dev/null 2>&1 || sudo yum install -y skopeo
   rpm -q jq >/dev/null 2>&1 || sudo yum install -y jq
   _CONTAINER_BINARY="docker"
 elif [[ $_REDHAT_RELEASE -eq 8 ]]; then
-  echo "RHEL8 Detected"
+  echo "OS RHEL8 detected..."
   rpm -q podman >/dev/null 2>&1 || sudo dnf install -y podman
   rpm -q skopeo >/dev/null 2>&1 || sudo dnf install -y skopeo
   rpm -q jq >/dev/null 2>&1 || sudo dnf install -y jq
   _CONTAINER_BINARY="podman"
 else 
-  echo "Not Supported"
+  echo "OS not supported by this script.."
+  exit 1
 fi
 
 # Verify Registry login credential
